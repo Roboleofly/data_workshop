@@ -17,7 +17,7 @@ def main():
     parser = argparse.ArgumentParser(description="List all items in an HDF5 file.")
     parser.add_argument(
         "--path", "-p",
-        default="/media/jushen/leofly-liao/datasets/h5/agilex/algo_compare/agilex_cobotmagic2_dualArm-gripper-3cameras_5_collect button/success_episodes/0707_135407/data/trajectory.hdf5",              # 默认值
+        default="/media/jushen/leofly-liao/datasets/h5/ark/ark_lift_dualArm-gripper-1cameras_3_move_yellow_beetle_car_and_pick_and_place_it_into_the_blue_storage_box_20250718/success_episodes/train/0718_175127/data/trajectory.hdf5",              # 默认值
         help="Path to the .h5 or .hdf5 file (default: ./data.h5)"
     )
     args = parser.parse_args()

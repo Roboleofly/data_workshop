@@ -94,7 +94,7 @@ def process_episode(episode_path: Path,
     
     # Add frame data to dataset
     num_frames = len(puppet_state)
-    for i in tqdm(range(num_frames), desc=f"Processing {episode_path.name}"):
+    for i in tqdm(range(num_frames), desc=f"Processing {episode_path.name}", position=1, leave=False):
         frame_data = {
             'task': task_name,
             "action": puppet_state[i],
@@ -113,7 +113,7 @@ def main():
     parser = argparse.ArgumentParser(description="Dataset Conversion Tool")
     parser.add_argument("--config", type=str, default="/media/jushen/leofly-liao/workspace/data_workshop/converter/feature_config.json", help="Path to config JSON file")
     parser.add_argument("--repo_id", type=str, default="agilex_3_collect_button", help="Dataset repository ID")
-    parser.add_argument("--src_root", type=str, default="/media/jushen/leofly-liao/datasets/h5/agilex/algo_compare/agilex_cobotmagic2_dualArm-gripper-3cameras_5_collect button/success_episodes", help="Source data directory")
+    parser.add_argument("--src_root", type=str, default="/media/jushen/leofly-liao/datasets/h5/agilex/algo_compare/agilex_cobotmagic2_dualArm-gripper-3cameras_5_collect button/success_episodes/train", help="Source data directory")
     parser.add_argument("--tgt_path", type=str, default="/media/jushen/leofly-liao/datasets/lerobot/agilex/algo_compare", help="Target output directory")
     parser.add_argument("--task_name", type=str, default="turn_on_light_switch", help="Task name identifier")
     parser.add_argument("--fps", type=int, default=30, help="Frames per second")
@@ -136,11 +136,23 @@ def main():
     episodes = [ep for ep in src_root.iterdir() if ep.is_dir()]
     
     logging.info(f"Start processing {len(episodes)} episodes...")
-    for ep_dir in episodes:
+
+    for ep_dir in tqdm(episodes, desc="All episodes", position=0):
         ep_path = ep_dir / "data" / "trajectory.hdf5"
-        if process_episode(ep_path, dataset, args.task_name):
+
+        # ▶ 处理单集时的帧级进度条，放到下一行显示
+        if process_episode(ep_path,
+                       dataset,
+                       args.task_name,
+                       ):                     # process_episode 里保持 position=1
             dataset.save_episode()
             logging.info(f"Saved episode: {ep_dir.name}")
+
+    # for ep_dir in episodes:
+    #     ep_path = ep_dir / "data" / "trajectory.hdf5"
+    #     if process_episode(ep_path, dataset, args.task_name):
+    #         dataset.save_episode()
+    #         logging.info(f"Saved episode: {ep_dir.name}")
 
     logging.info("Dataset conversion completed!")
 

@@ -33,6 +33,7 @@ from huggingface_hub import HfApi
 
 import lerobot
 from lerobot.common.datasets.lerobot_dataset import LeRobotDataset, LeRobotDatasetMetadata
+import os
 
 # We ported a number of existing datasets ourselves, use this to see the list:
 # print("List of available datasets:")
@@ -49,14 +50,21 @@ from lerobot.common.datasets.lerobot_dataset import LeRobotDataset, LeRobotDatas
 # Let's take this one for this example
 
 
-# repo_id = "lerobot/aloha_mobile_cabinet" # /media/jushen/leofly-liao/datasets/lerobot/agilex
-repo_id = "agilex/agilex_cobotmagic2_dualArm-gripper-3cameras_2_move_banana_from_plate_to_bowl_20250429"
-# We can have a look and fetch its metadata to know more about it:
-ds_meta = LeRobotDatasetMetadata(repo_id)
+# os.environ["HF_LEROBOT_HOME"] = "/media/jushen/leofly-liao/datasets/lerobot/agilex/algo_compare"
+# export HF_LEROBOT_HOME=/media/jushen/leofly-liao/datasets/lerobot/agilex/algo_compare
 
-# By instantiating just this class, you can quickly access useful information about the content and the
-# structure of the dataset without downloading the actual data yet (only metadata files — which are
-# lightweight).
+# repo_id = "lerobot/aloha_mobile_cabinet" # /media/jushen/leofly-liao/datasets/lerobot/agilex
+repo_id = "agilex_3_collect_button"
+# We can have a look and fetch its metadata to know more about it:
+# ds_meta = LeRobotDatasetMetadata(repo_id)
+
+
+# 读取元数据
+ds_meta = LeRobotDatasetMetadata("agilex_3_collect_button")
+
+# # By instantiating just this class, you can quickly access useful information about the content and the
+# # structure of the dataset without downloading the actual data yet (only metadata files — which are
+# # lightweight).
 print(f"Total number of episodes: {ds_meta.total_episodes}")
 print(f"Average number of frames per episode: {ds_meta.total_frames / ds_meta.total_episodes:.3f}")
 print(f"Frames per second used during data collection: {ds_meta.fps}")
@@ -68,29 +76,29 @@ print(ds_meta.tasks)
 print("Features:")
 pprint(ds_meta.features)
 
-# You can also get a short summary by simply printing the object:
-print(ds_meta)
+# # You can also get a short summary by simply printing the object:
+# print(ds_meta)
 
-# You can then load the actual dataset from the hub.
-# Either load any subset of episodes:
+# # You can then load the actual dataset from the hub.
+# # Either load any subset of episodes:
 dataset = LeRobotDataset(repo_id, episodes=[0, 10, 11, 23])
 
-# And see how many frames you have:
-print(f"Selected episodes: {dataset.episodes}")
-print(f"Number of episodes selected: {dataset.num_episodes}")
-print(f"Number of frames selected: {dataset.num_frames}")
+# # And see how many frames you have:
+# print(f"Selected episodes: {dataset.episodes}")
+# print(f"Number of episodes selected: {dataset.num_episodes}")
+# print(f"Number of frames selected: {dataset.num_frames}")
 
 # Or simply load the entire dataset:
 # dataset = LeRobotDataset(repo_id)
 # print(f"Number of episodes selected: {dataset.num_episodes}")
 # print(f"Number of frames selected: {dataset.num_frames}")
 
-# The previous metadata class is contained in the 'meta' attribute of the dataset:
-print(dataset.meta)
+# # The previous metadata class is contained in the 'meta' attribute of the dataset:
+# print(dataset.meta)
 
-# LeRobotDataset actually wraps an underlying Hugging Face dataset
-# (see https://huggingface.co/docs/datasets for more information).
-print(dataset.hf_dataset)
+# # LeRobotDataset actually wraps an underlying Hugging Face dataset
+# # (see https://huggingface.co/docs/datasets for more information).
+# print(dataset.hf_dataset)
 
 # LeRobot datasets also subclasses PyTorch datasets so you can do everything you know and love from working
 # with the latter, like iterating through the dataset.
@@ -105,35 +113,35 @@ to_idx = dataset.episode_data_index["to"][episode_index].item()
 camera_key = dataset.meta.camera_keys[0]
 frames = [dataset[idx][camera_key] for idx in range(from_idx, to_idx)]
 
-# The objects returned by the dataset are all torch.Tensors
-print(type(frames[0]))
-print(frames[0].shape)
+# # The objects returned by the dataset are all torch.Tensors
+# print(type(frames[0]))
+# print(frames[0].shape)
 
-# Since we're using pytorch, the shape is in pytorch, channel-first convention (c, h, w).
-# We can compare this shape with the information available for that feature
-pprint(dataset.features[camera_key])
-# In particular:
-print(dataset.features[camera_key]["shape"])
+# # Since we're using pytorch, the shape is in pytorch, channel-first convention (c, h, w).
+# # We can compare this shape with the information available for that feature
+# pprint(dataset.features[camera_key])
+# # In particular:
+# print(dataset.features[camera_key]["shape"])
 # The shape is in (h, w, c) which is a more universal format.
 
 # For many machine learning applications we need to load the history of past observations or trajectories of
 # future actions. Our datasets can load previous and future frames for each key/modality, using timestamps
 # differences with the current loaded frame. For instance:
-# delta_timestamps = {
-#     # loads 4 images: 1 second before current frame, 500 ms before, 200 ms before, and current frame
-#     camera_key: [-1, -0.5, -0.20, 0],
-#     # loads 6 state vectors: 1.5 seconds before, 1 second before, ... 200 ms, 100 ms, and current frame
-#     "observation.state": [-1.5, -1, -0.5, -0.20, -0.10, 0],
-#     # loads 64 action vectors: current frame, 1 frame in the future, 2 frames, ... 63 frames in the future
-#     "action": [t / dataset.fps for t in range(64)],
-# }
+delta_timestamps = {
+    # loads 4 images: 1 second before current frame, 500 ms before, 200 ms before, and current frame
+    camera_key: [-1, -0.5, -0.20, 0],
+    # loads 6 state vectors: 1.5 seconds before, 1 second before, ... 200 ms, 100 ms, and current frame
+    "observation.state": [-1.5, -1, -0.5, -0.20, -0.10, 0],
+    # loads 64 action vectors: current frame, 1 frame in the future, 2 frames, ... 63 frames in the future
+    "action": [t / dataset.fps for t in range(64)],
+}
 # # Note that in any case, these delta_timestamps values need to be multiples of (1/fps) so that added to any
 # # timestamp, you still get a valid timestamp.
 
-# dataset = LeRobotDataset(repo_id, delta_timestamps=delta_timestamps)
-# print(f"\n{dataset[0][camera_key].shape=}")  # (4, c, h, w)
-# print(f"{dataset[0]['observation.state'].shape=}")  # (6, c)
-# print(f"{dataset[0]['action'].shape=}\n")  # (64, c)
+dataset = LeRobotDataset(repo_id, delta_timestamps=delta_timestamps)
+print(f"\n{dataset[0][camera_key].shape=}")  # (4, c, h, w)
+print(f"{dataset[0]['observation.state'].shape=}")  # (6, c)
+print(f"{dataset[0]['action'].shape=}\n")  # (64, c)
 
 # Finally, our datasets are fully compatible with PyTorch dataloaders and samplers because they are just
 # PyTorch datasets.

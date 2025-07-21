@@ -127,7 +127,7 @@ def main():
     parser.add_argument(
         "--src_root",
         type=str,
-        default="/media/jushen/leofly-liao/datasets/h5/agilex/algo_compare/agilex_cobotmagic2_dualArm-gripper-3cameras_5_collect button/success_episodes",
+        default="/media/jushen/leofly-liao/datasets/h5/agilex/algo_compare/agilex_cobotmagic2_dualArm-gripper-3cameras_5_collect button/success_episodes/train",
         help="Source data directory",
     )
     parser.add_argument(
