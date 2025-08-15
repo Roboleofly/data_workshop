@@ -51,16 +51,18 @@ import os
 
 
 # os.environ["HF_LEROBOT_HOME"] = "/media/jushen/leofly-liao/datasets/lerobot/agilex/algo_compare"
-# export HF_LEROBOT_HOME=/media/jushen/leofly-liao/datasets/lerobot/agilex/algo_compare
 
-# repo_id = "lerobot/aloha_mobile_cabinet" # /media/jushen/leofly-liao/datasets/lerobot/agilex
-repo_id = "agilex_3_collect_button"
+#TODO source variable from environment 
+# export HF_LEROBOT_HOME=/media/jushen/leofly-liao/datasets/lerobot/agilex/
+
+# Here is the repo_id of the dataset we want to load.
+repo_id = "agilex_3_pick_tape"
 # We can have a look and fetch its metadata to know more about it:
 # ds_meta = LeRobotDatasetMetadata(repo_id)
 
 
 # 读取元数据
-ds_meta = LeRobotDatasetMetadata("agilex_3_collect_button")
+ds_meta = LeRobotDatasetMetadata("agilex_3_pick_tape")
 
 # # By instantiating just this class, you can quickly access useful information about the content and the
 # # structure of the dataset without downloading the actual data yet (only metadata files — which are

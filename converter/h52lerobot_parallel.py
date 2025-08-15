@@ -149,8 +149,6 @@ if __name__ == '__main__':
 
     repo_id = "agilex_3_pick_up_tape_dev"
 
-    
-
     converter = Converter(
         robot_name='agilex_3',
         workers=4,
