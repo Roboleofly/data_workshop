@@ -57,7 +57,10 @@ def process_episode(episode_path: Path,
     """Process single episode data"""
     try:
         with h5py.File(episode_path, 'r') as file:
-            print(file['puppet'].keys())
+            
+            lang_prompt = file["language_instruction"][()].decode('utf-8')
+            
+            # print(file['puppet'].keys())
             # Read robotic arm joint data
             puppet_state = np.array(file["puppet/arm_joint_position"])
             chassis_twist = np.array(file["puppet/chassis_state_twist"])
@@ -96,7 +99,7 @@ def process_episode(episode_path: Path,
     num_frames = len(puppet_state)
     for i in tqdm(range(num_frames), desc=f"Processing {episode_path.name}", position=1, leave=False):
         frame_data = {
-            'task': task_name,
+            'task': lang_prompt,
             "action": puppet_state[i],
             "observation.state": puppet_state[i],
             "observation.images.camera_top": rgb_camera_top[i],
@@ -112,10 +115,10 @@ def main():
     # Parse arguments
     parser = argparse.ArgumentParser(description="Dataset Conversion Tool")
     parser.add_argument("--config", type=str, default="/media/jushen/leofly-liao/workspace/data_workshop/converter/feature_config.json", help="Path to config JSON file")
-    parser.add_argument("--repo_id", type=str, default="agilex_3_pick_tape", help="Dataset repository ID")
-    parser.add_argument("--src_root", type=str, default="/media/jushen/leofly-liao/datasets/h5/agilex/agilex_cobotmagic3_dualArm-gripper-3cameras_2_find_out_packaging_tape_into_the_other_basket_20250703/success_episodes/", help="Source data directory")
+    parser.add_argument("--repo_id", type=str, default="agilex_cobotmagic2_dualArm-gripper-3cameras_5_arrange_dishes_pick_lettuce_and_serve_dishes", help="Dataset repository ID")
+    parser.add_argument("--src_root", type=str, default="/media/jushen/leofly-liao/datasets/h5/agilex/mobile/agilex_cobotmagic2_dualArm-gripper-3cameras_5_arrange_dishes_pick_lettuce_and_serve_dishes/success_episodes/", help="Source data directory")
     parser.add_argument("--tgt_path", type=str, default="/media/jushen/leofly-liao/datasets/lerobot/agilex", help="Target output directory")
-    parser.add_argument("--task_name", type=str, default="pick up the tape", help="Task name identifier")
+    parser.add_argument("--task_name", type=str, default="pick up the tape", help="Task name identifier") # task name is useless 
     parser.add_argument("--fps", type=int, default=30, help="Frames per second")
     parser.add_argument("--robot_type", type=str, default="agilex_3", help="Robot type identifier")
     args = parser.parse_args()

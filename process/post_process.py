@@ -1,6 +1,0 @@
-
-
-
-
-
-# TODO  temporag metheod function 

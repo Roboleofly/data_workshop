@@ -10,6 +10,7 @@ from threading import Lock
 import json
 import ast
 import logging
+import os
 
 
 def load_config(config_path: str) -> dict:
@@ -86,7 +87,7 @@ def create_lerobot_dataset(repo_id, robot_name, feature_config_pth, output_dir):
         robot_type=robot_name,
         features=features,
     )
-    dataset.start_image_writer(num_processes=2, num_threads=10)
+    dataset.start_image_writer(num_processes=2, num_threads=10) # num_processes=2, num_threads = 10
     dataset.lock = Lock()
     return dataset
 
@@ -144,20 +145,85 @@ class Converter:
 
 if __name__ == '__main__':
 
+    # # 所有 repo_id 都是当前目录下的文件夹名
+    # src_root_base = "/media/jushen/leofly-liao/datasets/h5/agilex/mobile"
+    # output_dir = "/media/jushen/leofly-liao/datasets/lerobot/agilex/mobile"
 
-    repoids = []
+    # # repo_ids = sorted(os.listdir(src_root_base))  # 获取所有文件夹名
 
-    repo_id = "agilex_3_pick_up_tape_dev"
+    # repo_ids = ["agilex_cobotmagic2_dualArm-gripper-3cameras_5_arrange_dishes_pick_lettuce_and_serve_dishes","agilex_cobotmagic2_dualArm-gripper-3cameras_5_arrange_dishes_pick_lettuce_and_serve_dishes_20250710","agilex_cobotmagic2_dualArm-gripper-3cameras_5_arrange_dishes_pick_lettuce_and_serve_dishes_20250711"]
+
+    # converter = Converter(
+    #     robot_name="agilex_3",
+    #     workers=2,
+    #     feature_config_pth="/media/jushen/leofly-liao/workspace/data_workshop/converter/feature_config.json"
+    # )
+
+    # for repo_id in repo_ids:
+    #     src_root = os.path.join(src_root_base, repo_id, "success_episodes")
+    #     if not os.path.isdir(src_root):
+    #         continue  # 跳过非文件夹
+
+    #     task = Task(
+    #         name=repo_id,
+    #         src_root=src_root
+    #     )
+
+    #     print(f"Converting {repo_id} ...")
+    #     converter.convert(task, repo_id=repo_id, output_dir=output_dir)
+
+    # repo_id = "agilex_cobotmagic2_dualArm-gripper-3cameras_5_arrange_dishes"
+
+    # converter = Converter(
+    #     robot_name='agilex_3',
+    #     workers= 1, # 4
+    #     feature_config_pth='/media/jushen/leofly-liao/workspace/data_workshop/converter/feature_config.json'
+    # )
+
+    # task = Task(
+    #     name=repo_id,
+    #     src_root='/media/jushen/leofly-liao/datasets/h5/agilex/mobile/agilex_cobotmagic2_dualArm-gripper-3cameras_5_arrange_dishes/success_episodes/train'
+    # )
+
+    # converter.convert(task, repo_id=repo_id, output_dir='/media/jushen/leofly-liao/datasets/lerobot/agilex/mobile')
+
+
+    repo_ids = [
+        # "agilex_cobotmagic2_dualArm-gripper-3cameras_5_arrange_dishes_20250709",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_arrange_dishes_pick_lettuce_and_serve_dishes_20250710",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_back_shelf",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_back_shelf_20250729",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_back_shelf_20250730",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_bowl_faucet",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_bowl_faucet_20250721",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_brake_pads",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_brake_pads_250804",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_brake_pads_250805",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_move_apple",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_move_apple_20250716",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_move_corn",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_move_corn_20250714",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_move_forward",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_organize_bottom",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_place_coca",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_place_coca_20250722",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_supermarket_pick_apple",
+        "agilex_cobotmagic2_dualArm-gripper-3cameras_5_supermarket_pick_apple_20250723",
+    ]
 
     converter = Converter(
-        robot_name='agilex_3',
-        workers=4,
-        feature_config_pth='/media/jushen/leofly-liao/workspace/data_workshop/converter/feature_config.json'
+        robot_name="agilex_3",
+        workers=1,
+        feature_config_pth="/media/jushen/leofly-liao/workspace/data_workshop/converter/feature_config.json",
     )
 
-    task = Task(
-        name=repo_id,
-        src_root='/media/jushen/leofly-liao/datasets/h5/agilex/agilex_cobotmagic3_dualArm-gripper-3cameras_2_find_out_packaging_tape_into_the_other_basket_20250703/success_episodes'
-    )
+    output_dir = "/media/jushen/leofly-liao/datasets/lerobot/agilex/mobile"
+    base_src_root = "/media/jushen/leofly-liao/datasets/h5/agilex/mobile"
 
-    converter.convert(task, repo_id=repo_id, output_dir='/media/jushen/leofly-liao/datasets/lerobot/agilex')
+    for repo_id in repo_ids:
+        task = Task(
+            name=repo_id,
+            src_root=f"{base_src_root}/{repo_id}/success_episodes",
+        )
+        print(f"Converting {repo_id} ...")
+        converter.convert(task, repo_id=repo_id, output_dir=output_dir)

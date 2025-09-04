@@ -54,15 +54,20 @@ import os
 
 #TODO source variable from environment 
 # export HF_LEROBOT_HOME=/media/jushen/leofly-liao/datasets/lerobot/agilex/
-
+# export HF_LEROBOT_HOME=/media/jushen/gongda-wu/research/datasets/station_data/lerobot_data/franka_emika_dualArm-gripper-4cameras_1
+# export HF_LEROBOT_HOME=/media/jushen/gongda-wu/research/datasets/station_data/lerobot_data/ur_5e_dualArm-gripper-6cameras_3
+# export HF_LEROBOT_HOME=/media/jushen/gongda-wu/research/datasets/station_data/lerobot_data/tienkung_pro2_dualArm-gripper-1cameras_2
+# export HF_LEROBOT_HOME=/media/jushen/gongda-wu/research/datasets/station_data/lerobot_data/agilex_cobotmagic1_dualArm-gripper-4cameras_1
+# export HF_LEROBOT_HOME=/media/jushen/gongda-wu/research/datasets/station_data/lerobot_data/tienkung_max_dualarm-gripper-3cameras_3_master
 # Here is the repo_id of the dataset we want to load.
-repo_id = "agilex_3_pick_tape"
+
+repo_id = "tienkung_max3_weight_sauce"
 # We can have a look and fetch its metadata to know more about it:
 # ds_meta = LeRobotDatasetMetadata(repo_id)
 
 
 # 读取元数据
-ds_meta = LeRobotDatasetMetadata("agilex_3_pick_tape")
+ds_meta = LeRobotDatasetMetadata("tienkung_max3_weight_sauce")
 
 # # By instantiating just this class, you can quickly access useful information about the content and the
 # # structure of the dataset without downloading the actual data yet (only metadata files — which are
